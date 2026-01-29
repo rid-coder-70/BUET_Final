@@ -3,132 +3,223 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Valerix Order Management - Resilient Microservices</title>
+    <title>Valerix OMS - Enterprise Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1>🚀 Valerix Order Management System</h1>
-        <p class="subtitle">Resilient Microservices with Chaos Engineering</p>
-      </header>
+    
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="brand-logo">
+                <i class="ph-fill ph-hexagon"></i>
+            </div>
+            <div class="brand-text">
+                <h1>Valerix OMS</h1>
+                <span class="badge-beta">PROD</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <span class="nav-item active">Dashboard</span>
+        </div>
+    </nav>
 
-     
+    <div class="container">
+      
       <section class="status-section">
-        <h2>📊 System Status</h2>
+        <div class="status-header">
+            <h2>System Health</h2>
+            <span class="live-indicator"><span class="dot"></span> Live</span>
+        </div>
+        
         <div class="status-grid">
           <div class="status-card">
-            <h3>Order Service</h3>
-            <div class="status-indicator" id="order-status">🔄</div>
-            <p id="order-health">Checking...</p>
-          </div>
-          <div class="status-card">
-            <h3>Inventory Service</h3>
-            <div class="status-indicator" id="inventory-status">🔄</div>
-            <p id="inventory-health">Checking...</p>
-          </div>
-          <div class="status-card">
-            <h3>Circuit Breaker</h3>
-            <div class="status-indicator" id="cb-status">🔄</div>
-            <p id="cb-state">Loading...</p>
-          </div>
-          <div class="status-card">
-            <h3>Prometheus</h3>
-            <div class="status-indicator">✅</div>
-            <p>
-              <a href="http://localhost:9090" target="_blank">Open Dashboard</a>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      
-      <section class="order-section">
-        <h2>📦 Create Order</h2>
-        <form id="order-form">
-          <div class="form-group">
-            <label for="customerId">Customer ID:</label>
-            <input type="text" id="customerId" value="CUST-001" required />
-          </div>
-          <div class="form-group">
-            <label for="productId">Product:</label>
-            <select id="productId" required>
-              <option value="PROD-001">Gaming Laptop - Dell XPS 15</option>
-              <option value="PROD-002">Gaming Console - Xbox Series X</option>
-              <option value="PROD-003">Gaming Console - Nintendo Switch</option>
-              <option value="PROD-004">VR Headset - Meta Quest 3</option>
-              <option value="PROD-005">Gaming Monitor - ASUS ROG</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="quantity">Quantity:</label>
-            <input
-              type="number"
-              id="quantity"
-              value="1"
-              min="1"
-              max="10"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="useIdempotency" />
-              Use Idempotency Key (prevents duplicates)
-            </label>
-          </div>
-          <button type="submit" class="btn btn-primary">Create Order</button>
-        </form>
-        <div id="order-result" class="result-box"></div>
-      </section>
-
-     
-      <section class="inventory-section">
-        <h2>📊 Current Inventory</h2>
-        <button onclick="loadInventory()" class="btn btn-secondary">
-          Refresh Inventory
-        </button>
-        <div id="inventory-grid" class="inventory-grid"></div>
-      </section>
-
-      
-      <section class="chaos-section">
-        <h2>🐛 Chaos Engineering Controls</h2>
-        <div class="chaos-grid">
-          <div class="chaos-card">
-            <h3>Latency Gremlin</h3>
-            <p>Simulates slow network responses (3s delay every 5th request)</p>
-            <div class="chaos-controls">
-              <label class="switch">
-                <input type="checkbox" id="gremlin-toggle" />
-                <span class="slider"></span>
-              </label>
-              <span id="gremlin-status">Checking...</span>
+            <div class="card-icon blue">
+                <i class="ph-bold ph-shopping-cart"></i>
+            </div>
+            <div class="card-info">
+                <h3>Order Service</h3>
+                <div class="health-row">
+                    <p id="order-health" class="status-text">Checking...</p>
+                    <div class="status-indicator" id="order-status">
+                        <i class="ph-bold ph-spinner spin"></i>
+                    </div>
+                </div>
             </div>
           </div>
-          <div class="chaos-card">
-            <h3>Crash Simulator</h3>
-            <p>Simulates service crashes after DB commit (every 8th request)</p>
-            <div class="chaos-controls">
-              <label class="switch">
-                <input type="checkbox" id="crash-toggle" />
-                <span class="slider"></span>
-              </label>
-              <span id="crash-status">Checking...</span>
+
+          <div class="status-card">
+            <div class="card-icon purple">
+                <i class="ph-bold ph-warehouse"></i>
+            </div>
+            <div class="card-info">
+                <h3>Inventory Service</h3>
+                <div class="health-row">
+                    <p id="inventory-health" class="status-text">Checking...</p>
+                    <div class="status-indicator" id="inventory-status">
+                        <i class="ph-bold ph-spinner spin"></i>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="status-card">
+            <div class="card-icon orange">
+                <i class="ph-bold ph-lightning"></i>
+            </div>
+            <div class="card-info">
+                <h3>Circuit Breaker</h3>
+                <div class="health-row">
+                    <p id="cb-state" class="status-text">Loading...</p>
+                    <div class="status-indicator" id="cb-status">
+                        <i class="ph-bold ph-spinner spin"></i>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="status-card">
+            <div class="card-icon green">
+                <i class="ph-bold ph-chart-line-up"></i>
+            </div>
+            <div class="card-info">
+                <h3>Metrics</h3>
+                <div class="health-row">
+                    <a href="http://localhost:9090" target="_blank" class="link-btn">
+                        View Grafana <i class="ph-bold ph-arrow-right"></i>
+                    </a>
+                    <div class="status-indicator"><i class="ph-fill ph-check-circle success"></i></div>
+                </div>
             </div>
           </div>
         </div>
-        <div class="chaos-stats">
-          <h3>Stats</h3>
-          <pre id="chaos-stats">Loading...</pre>
-        </div>
       </section>
 
-      
-      <section class="recent-orders-section">
-        <h2>📋 Recent Activity</h2>
-        <div id="activity-log" class="activity-log"></div>
-      </section>
+      <div class="main-layout">
+        
+        <div class="column-primary">
+            <section class="order-section card">
+                <div class="card-header">
+                    <h2><i class="ph-duotone ph-plus-circle"></i> Create New Order</h2>
+                </div>
+                <div class="card-body">
+                    <form id="order-form">
+                        <div class="form-group">
+                            <label for="customerId">Customer Identifier</label>
+                            <div class="input-wrapper">
+                                <i class="ph-bold ph-user"></i>
+                                <input type="text" id="customerId" value="CUST-001" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="productId">Product SKU</label>
+                            <div class="input-wrapper">
+                                <i class="ph-bold ph-tag"></i>
+                                <select id="productId" required>
+                                <option value="PROD-001">Gaming Laptop - Dell XPS 15</option>
+                                <option value="PROD-002">Gaming Console - Xbox Series X</option>
+                                <option value="PROD-003">Gaming Console - Nintendo Switch</option>
+                                <option value="PROD-004">VR Headset - Meta Quest 3</option>
+                                <option value="PROD-005">Gaming Monitor - ASUS ROG</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quantity">Quantity</label>
+                                <input
+                                type="number"
+                                id="quantity"
+                                value="1"
+                                min="1"
+                                max="10"
+                                required
+                                />
+                            </div>
+                            <div class="form-group checkbox-wrapper">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" id="useIdempotency" />
+                                    <span class="checkbox-box"><i class="ph-bold ph-check"></i></span>
+                                    <span class="checkbox-label">Idempotency Key</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            Submit Order
+                        </button>
+                    </form>
+                    <div id="order-result" class="result-box"></div>
+                </div>
+            </section>
+
+            <section class="recent-orders-section card">
+                <div class="card-header">
+                    <h2><i class="ph-duotone ph-list-magnifying-glass"></i> System Logs</h2>
+                </div>
+                <div id="activity-log" class="activity-log"></div>
+            </section>
+        </div>
+
+        <div class="column-secondary">
+            
+            <section class="inventory-section card">
+                <div class="card-header flex-between">
+                    <h2>Inventory Levels</h2>
+                    <button onclick="loadInventory()" class="btn-icon-only">
+                        <i class="ph-bold ph-arrows-clockwise"></i>
+                    </button>
+                </div>
+                <div id="inventory-grid" class="inventory-grid"></div>
+            </section>
+
+            <section class="chaos-section card danger-zone">
+                <div class="card-header">
+                    <h2><i class="ph-duotone ph-warning-octagon"></i> Chaos Engineering</h2>
+                    <span class="badge-outline">TEST ENV</span>
+                </div>
+                <div class="chaos-grid">
+                    
+                    <div class="control-row">
+                        <div class="control-info">
+                            <span class="control-title">Latency Injection</span>
+                            <span class="control-desc">Add 3s delay (20% rate)</span>
+                        </div>
+                        <div class="control-action">
+                             <label class="switch">
+                                <input type="checkbox" id="gremlin-toggle" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="control-status" id="gremlin-status">IDLE</div>
+                    </div>
+                    
+                    <div class="divider"></div>
+
+                    <div class="control-row">
+                        <div class="control-info">
+                            <span class="control-title">Pod Crash</span>
+                            <span class="control-desc">Kill Post-Commit (12.5% rate)</span>
+                        </div>
+                        <div class="control-action">
+                             <label class="switch">
+                                <input type="checkbox" id="crash-toggle" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="control-status" id="crash-status">IDLE</div>
+                    </div>
+
+                </div>
+                <div class="chaos-stats-box">
+                    <pre id="chaos-stats">-- No Active Simulation --</pre>
+                </div>
+            </section>
+
+        </div>
+      </div>
     </div>
 
     <script src="app.js"></script>
