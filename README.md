@@ -66,7 +66,8 @@
 
 ```bash
 # Clone the repository
-cd valerix-microservices
+git clone https://github.com/rid-coder-70/BUET_Final
+cd BUET_Final
 
 # Start all services
 docker compose up -d
@@ -402,73 +403,6 @@ cd inventory-service && npm test
 
 ---
 
-## ☁️ Cloud Deployment (Azure)
-
-Complete deployment guide: **[AZURE_DEPLOYMENT.md](./AZURE_DEPLOYMENT.md)**
-
-### Quick Overview
-
-**Deployment Option**: Azure Kubernetes Service (AKS) - Recommended
-
-**Resources Needed:**
-
-- Azure Container Registry (ACR)
-- AKS Cluster (2+ nodes)
-- Azure Database for PostgreSQL (Flexible Server)
-- Azure Monitor (optional)
-
-**Estimated Cost:**
-
-- Development: ~$103/month
-- Production: ~$540/month
-
-**Deployment Steps:**
-
-1. Create Azure resources (ACR, AKS, PostgreSQL)
-2. Build and push Docker images to ACR
-3. Apply Kubernetes manifests
-4. Configure monitoring and scaling
-5. Test deployed services
-
-**See [AZURE_DEPLOYMENT.md](./AZURE_DEPLOYMENT.md) for detailed instructions.**
-
----
-
-## 🔒 Security Best Practices
-
-✅ **Secrets Management** - Use environment variables, never commit secrets  
-✅ **Database Security** - Separate credentials per service  
-✅ **Network Isolation** - Services communicate via internal network  
-✅ **Health Checks** - Built-in liveness/readiness probes  
-✅ **Input Validation** - All endpoints validate input data  
-✅ **Error Handling** - Graceful error responses, no sensitive data leaks
-
----
-
-## 📈 Performance Characteristics
-
-### Latency (Local)
-
-- **Without Resilience**: ~10-20ms
-- **With Resilience** (circuit breaker closed): ~15-30ms
-- **With Gremlin** (enabled): ~3000ms (simulated delay)
-- **Circuit Breaker** (open): <5ms (fail-fast)
-
-### Throughput
-
-- **Sustained Load**: 50+ req/sec per service
-- **Peak Load**: 100+ req/sec per service
-- **Database Connections**: Pooled (max 20 per service)
-
-### Reliability
-
-- **Idempotency**: 100% duplicate prevention with idempotency keys
-- **Crash Recovery**: Automatic retry with exponential backoff
-- **Circuit Breaker**: Prevents cascade failures
-- **Data Consistency**: ACID transactions per service
-
----
-
 ## 🛠️ Development
 
 ### Local Development (Without Docker)
@@ -519,15 +453,6 @@ docker compose down -v
 
 ---
 
-## 📚 Additional Resources
-
-- **Architecture Diagram**: See above
-- **Azure Deployment**: [AZURE_DEPLOYMENT.md](./AZURE_DEPLOYMENT.md)
-- **Test Scripts**: `scripts/` directory
-- **API Documentation**: See "API Endpoints" section above
-
----
-
 ## ✅ System Verification
 
 Run this command to verify everything is working:
@@ -553,17 +478,3 @@ xdg-open http://localhost:8080  # Linux
 ISC
 
 ---
-
-## 🎉 Features Implemented
-
-- [x] **Phase 1:** Foundational microservices with Docker
-- [x] **Phase 2:** Latency gremlin for chaos engineering
-- [x] **Phase 3:** Timeout, retry, circuit breaker patterns
-- [x] **Phase 4:** Idempotency and crash recovery
-- [x] **Phase 5:** CI/CD pipeline with automated testing
-- [x] **Phase 6:** Prometheus + Grafana monitoring
-- [x] **Phase 7:** Comprehensive failure simulation
-- [x] **Phase 8:** Interactive web UI
-- [x] **Phase 9:** Azure deployment guide
-
-**Status: Production-Ready! 🚀**
