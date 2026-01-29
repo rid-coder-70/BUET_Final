@@ -3,15 +3,15 @@ const axiosRetry = require('axios-retry').default;
 const CircuitBreaker = require('opossum');
 
 
-const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || 'http://104.214.168.187:3002';
+const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || 'http://localhost:3002';
 const REQUEST_TIMEOUT_MS = parseInt(process.env.REQUEST_TIMEOUT_MS) || 5000;
 const MAX_RETRIES = parseInt(process.env.MAX_RETRIES) || 3;
 
 
 const CIRCUIT_BREAKER_OPTIONS = {
-  timeout: parseInt(process.env.CIRCUIT_BREAKER_TIMEOUT) || 30000, 
-  errorThresholdPercentage: parseInt(process.env.CIRCUIT_BREAKER_ERROR_THRESHOLD) || 50, 
-  resetTimeout: parseInt(process.env.CIRCUIT_BREAKER_RESET_TIMEOUT) || 10000 
+  timeout: parseInt(process.env.CIRCUIT_BREAKER_TIMEOUT) || 30000,
+  errorThresholdPercentage: parseInt(process.env.CIRCUIT_BREAKER_ERROR_THRESHOLD) || 50,
+  resetTimeout: parseInt(process.env.CIRCUIT_BREAKER_RESET_TIMEOUT) || 10000
 };
 
 const createAxiosInstance = () => {
@@ -27,15 +27,15 @@ const createAxiosInstance = () => {
     retries: MAX_RETRIES,
     retryDelay: (retryCount) => {
       const delay = Math.pow(2, retryCount - 1) * 1000;
-      console.log(`⏳ Retry attempt ${retryCount}/${MAX_RETRIES}, waiting ${delay}ms`);
+      console.log(`Retry attempt ${retryCount}/${MAX_RETRIES}, waiting ${delay}ms`);
       return delay;
     },
     retryCondition: (error) => {
       return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
-             (error.response && error.response.status >= 500);
+        (error.response && error.response.status >= 500);
     },
     onRetry: (retryCount, error, requestConfig) => {
-      console.log(`🔄 Retrying request to ${requestConfig.url} (attempt ${retryCount}/${MAX_RETRIES})`);
+      console.log(`Retrying request to ${requestConfig.url} (attempt ${retryCount}/${MAX_RETRIES})`);
     }
   });
 
@@ -45,10 +45,10 @@ const createAxiosInstance = () => {
 const axiosInstance = createAxiosInstance();
 
 const updateInventoryFunction = async (productId, quantity, orderId, idempotencyKey) => {
-  console.log(`📦 Calling Inventory Service: productId=${productId}, quantity=${quantity}`);
-  
+  console.log(`Calling Inventory Service: productId=${productId}, quantity=${quantity}`);
+
   const startTime = Date.now();
-  
+
   try {
     const response = await axiosInstance.post('/api/inventory/update', {
       productId,
@@ -56,24 +56,24 @@ const updateInventoryFunction = async (productId, quantity, orderId, idempotency
       orderId,
       idempotencyKey
     });
-    
+
     const elapsed = Date.now() - startTime;
-    console.log(`✅ Inventory updated successfully in ${elapsed}ms`);
-    
+    console.log(`Inventory updated successfully in ${elapsed}ms`);
+
     return response.data;
   } catch (error) {
     const elapsed = Date.now() - startTime;
-    
+
     if (error.code === 'ECONNABORTED') {
       console.error(`Request timeout after ${elapsed}ms (configured: ${REQUEST_TIMEOUT_MS}ms)`);
       throw new Error(`Inventory Service timeout after ${REQUEST_TIMEOUT_MS}ms`);
     }
-    
+
     if (error.response) {
       console.error(`Inventory Service error (${error.response.status}): ${error.response.data?.error || 'Unknown error'}`);
       throw new Error(error.response.data?.error || 'Inventory update failed');
     }
-    
+
     console.error(`Network error: ${error.message}`);
     throw error;
   }
@@ -108,7 +108,7 @@ const updateInventory = async (productId, quantity, orderId, idempotencyKey) => 
     const result = await inventoryCircuitBreaker.fire(productId, quantity, orderId, idempotencyKey);
     return { success: true, data: result };
   } catch (error) {
-   
+
     if (inventoryCircuitBreaker.opened) {
       return {
         success: false,
@@ -116,7 +116,7 @@ const updateInventory = async (productId, quantity, orderId, idempotencyKey) => 
         circuitBreakerOpen: true
       };
     }
-    
+
     return {
       success: false,
       error: error.message || 'Failed to update inventory',
@@ -128,8 +128,8 @@ const updateInventory = async (productId, quantity, orderId, idempotencyKey) => 
 
 const getCircuitBreakerStats = () => {
   return {
-    state: inventoryCircuitBreaker.opened ? 'open' : 
-           inventoryCircuitBreaker.halfOpen ? 'half-open' : 'closed',
+    state: inventoryCircuitBreaker.opened ? 'open' :
+      inventoryCircuitBreaker.halfOpen ? 'half-open' : 'closed',
     stats: inventoryCircuitBreaker.stats,
     config: {
       timeout: CIRCUIT_BREAKER_OPTIONS.timeout,

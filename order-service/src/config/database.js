@@ -6,7 +6,7 @@ const sequelize = new Sequelize(
   process.env.DB_USER || 'order_user',
   process.env.DB_PASSWORD || 'order_password',
   {
-    host: process.env.DB_HOST || '104.214.168.187',
+    host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
@@ -24,11 +24,11 @@ const connectDB = async () => {
   try {
     await sequelize.authenticate();
     console.log('Order Service: PostgreSQL connection established successfully');
-    
+
 
     await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
     console.log('Order Service: Database models synchronized');
-    
+
     return true;
   } catch (error) {
     console.error('Order Service: Unable to connect to database:', error);

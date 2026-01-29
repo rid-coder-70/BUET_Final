@@ -6,7 +6,7 @@ const sequelize = new Sequelize(
   process.env.DB_USER || 'inventory_user',
   process.env.DB_PASSWORD || 'inventory_password',
   {
-    host: process.env.DB_HOST || '104.214.168.187',
+    host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
@@ -24,10 +24,10 @@ const connectDB = async () => {
   try {
     await sequelize.authenticate();
     console.log('Inventory Service: PostgreSQL connection established successfully');
-    
+
     await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
     console.log('Inventory Service: Database models synchronized');
-    
+
     return true;
   } catch (error) {
     console.error('Inventory Service: Unable to connect to database:', error);
