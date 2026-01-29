@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Valerix Order Management - Resilient Microservices</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🚀 Valerix Order Management System</h1>
+        <p class="subtitle">Resilient Microservices with Chaos Engineering</p>
+      </header>
+
+      <!-- Status Dashboard -->
+      <section class="status-section">
+        <h2>📊 System Status</h2>
+        <div class="status-grid">
+          <div class="status-card">
+            <h3>Order Service</h3>
+            <div class="status-indicator" id="order-status">🔄</div>
+            <p id="order-health">Checking...</p>
+          </div>
+          <div class="status-card">
+            <h3>Inventory Service</h3>
+            <div class="status-indicator" id="inventory-status">🔄</div>
+            <p id="inventory-health">Checking...</p>
+          </div>
+          <div class="status-card">
+            <h3>Circuit Breaker</h3>
+            <div class="status-indicator" id="cb-status">🔄</div>
+            <p id="cb-state">Loading...</p>
+          </div>
+          <div class="status-card">
+            <h3>Prometheus</h3>
+            <div class="status-indicator">✅</div>
+            <p>
+              <a href="http://localhost:9090" target="_blank">Open Dashboard</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Create Order -->
+      <section class="order-section">
+        <h2>📦 Create Order</h2>
+        <form id="order-form">
+          <div class="form-group">
+            <label for="customerId">Customer ID:</label>
+            <input type="text" id="customerId" value="CUST-001" required />
+          </div>
+          <div class="form-group">
+            <label for="productId">Product:</label>
+            <select id="productId" required>
+              <option value="PROD-001">Gaming Laptop - Dell XPS 15</option>
+              <option value="PROD-002">Gaming Console - Xbox Series X</option>
+              <option value="PROD-003">Gaming Console - Nintendo Switch</option>
+              <option value="PROD-004">VR Headset - Meta Quest 3</option>
+              <option value="PROD-005">Gaming Monitor - ASUS ROG</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input
+              type="number"
+              id="quantity"
+              value="1"
+              min="1"
+              max="10"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="useIdempotency" />
+              Use Idempotency Key (prevents duplicates)
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary">Create Order</button>
+        </form>
+        <div id="order-result" class="result-box"></div>
+      </section>
+
+      <!-- Inventory View -->
+      <section class="inventory-section">
+        <h2>📊 Current Inventory</h2>
+        <button onclick="loadInventory()" class="btn btn-secondary">
+          Refresh Inventory
+        </button>
+        <div id="inventory-grid" class="inventory-grid"></div>
+      </section>
+
+      <!-- Chaos Controls -->
+      <section class="chaos-section">
+        <h2>🐛 Chaos Engineering Controls</h2>
+        <div class="chaos-grid">
+          <div class="chaos-card">
+            <h3>Latency Gremlin</h3>
+            <p>Simulates slow network responses (3s delay every 5th request)</p>
+            <div class="chaos-controls">
+              <label class="switch">
+                <input type="checkbox" id="gremlin-toggle" />
+                <span class="slider"></span>
+              </label>
+              <span id="gremlin-status">Checking...</span>
+            </div>
+          </div>
+          <div class="chaos-card">
+            <h3>Crash Simulator</h3>
+            <p>Simulates service crashes after DB commit (every 8th request)</p>
+            <div class="chaos-controls">
+              <label class="switch">
+                <input type="checkbox" id="crash-toggle" />
+                <span class="slider"></span>
+              </label>
+              <span id="crash-status">Checking...</span>
+            </div>
+          </div>
+        </div>
+        <div class="chaos-stats">
+          <h3>Stats</h3>
+          <pre id="chaos-stats">Loading...</pre>
+        </div>
+      </section>
+
+      <!-- Recent Orders -->
+      <section class="recent-orders-section">
+        <h2>📋 Recent Activity</h2>
+        <div id="activity-log" class="activity-log"></div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

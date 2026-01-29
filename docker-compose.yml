@@ -1,0 +1,147 @@
+version: "3.8"
+
+services:
+  # PostgreSQL for Order Service
+  postgres-order:
+    image: postgres:15-alpine
+    container_name: valerix-postgres-order
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: order_user
+      POSTGRES_PASSWORD: order_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U order_user -d order_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - valerix-network
+
+  # PostgreSQL for Inventory Service
+  postgres-inventory:
+    image: postgres:15-alpine
+    container_name: valerix-postgres-inventory
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: inventory_user
+      POSTGRES_PASSWORD: inventory_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - inventory-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inventory_user -d inventory_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - valerix-network
+
+  # Order Service
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    container_name: valerix-order-service
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      DB_HOST: postgres-order
+      DB_PORT: 5432
+      DB_NAME: order_db
+      DB_USER: order_user
+      DB_PASSWORD: order_password
+      INVENTORY_SERVICE_URL: http://inventory-service:3002
+      REQUEST_TIMEOUT_MS: 5000
+      MAX_RETRIES: 3
+    depends_on:
+      postgres-order:
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+    networks:
+      - valerix-network
+    restart: unless-stopped
+
+  # Inventory Service
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    container_name: valerix-inventory-service
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      NODE_ENV: development
+      DB_HOST: postgres-inventory
+      DB_PORT: 5432
+      DB_NAME: inventory_db
+      DB_USER: inventory_user
+      DB_PASSWORD: inventory_password
+      ENABLE_GREMLIN: "false"
+      GREMLIN_LATENCY_MS: 3000
+      GREMLIN_PATTERN: deterministic
+      GREMLIN_FREQUENCY: 5
+      ENABLE_CRASH_SIMULATION: "false"
+      CRASH_PROBABILITY: 0.2
+      CRASH_TYPE: deterministic
+      CRASH_FREQUENCY: 8
+      CRASH_MODE: connection_reset
+    depends_on:
+      postgres-inventory:
+        condition: service_healthy
+    networks:
+      - valerix-network
+    restart: unless-stopped
+
+  # Monitoring Services
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: valerix-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9090:9090"
+    networks:
+      - valerix-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: valerix-grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    networks:
+      - valerix-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+networks:
+  valerix-network:
+    driver: bridge
+
+volumes:
+  order-db-data:
+  inventory-db-data:
+  prometheus-data:
+  grafana-data:

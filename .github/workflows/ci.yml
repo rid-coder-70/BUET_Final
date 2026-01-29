@@ -1,0 +1,86 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Order Service
+        run: |
+          cd order-service
+          docker build -t order-service:test .
+
+      - name: Build Inventory Service
+        run: |
+          cd inventory-service
+          docker build -t inventory-service:test .
+
+      - name: Start services with Docker Compose
+        run: |
+          docker compose up -d
+          sleep 20  # Wait for services to be fully ready
+
+      - name: Health Check - Order Service
+        run: |
+          curl -f http://localhost:3001/health || exit 1
+
+      - name: Health Check - Inventory Service
+        run: |
+          curl -f http://localhost:3002/health || exit 1
+
+      - name: Run Unit Tests - Order Service
+        run: |
+          cd order-service
+          npm install
+          npm test
+
+      - name: Run Unit Tests - Inventory Service
+        run: |
+          cd inventory-service
+          npm install
+          npm test
+
+      - name: Run Integration Tests
+        run: |
+          bash scripts/test-integration.sh
+
+      - name: Stress Test with Artillery
+        run: |
+          npm install -g artillery@latest
+          artillery run scripts/stress-test.yml --output report.json
+
+      - name: Generate Artillery Report
+        if: always()
+        run: |
+          artillery report report.json --output report.html
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            report.json
+            report.html
+
+      - name: Resilience Tests
+        run: |
+          bash scripts/test-gremlin-enabled.sh
+          bash scripts/test-resilience.sh
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker compose down -v

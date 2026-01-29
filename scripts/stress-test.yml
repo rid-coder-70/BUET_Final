@@ -1,0 +1,47 @@
+config:
+  target: "http://localhost:3001"
+  phases:
+    - duration: 60
+      arrivalRate: 10
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained load"
+    - duration: 60
+      arrivalRate: 100
+      name: "Peak load"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "Create Order Flow"
+    weight: 70
+    flow:
+      - post:
+          url: "/api/orders"
+          json:
+            customerId: "CUST-{{ $randomNumber(1000, 9999) }}"
+            productId: "PROD-{{ $randomNumber(1, 5) | str_pad(3, '0') }}"
+            productName: "Test Product"
+            quantity: "{{ $randomNumber(1, 5) }}"
+            idempotencyKey: "ORDER-{{ $randomString(16) }}"
+          capture:
+            - json: "$.order.id"
+              as: "orderId"
+      - think: 1
+
+  - name: "Get Inventory"
+    weight: 20
+    flow:
+      - get:
+          url: "/api/inventory/PROD-{{ $randomNumber(1, 5) | str_pad(3, '0') }}"
+      - think: 0.5
+
+  - name: "Check Health"
+    weight: 10
+    flow:
+      - get:
+          url: "/health"
+      - get:
+          url: "http://localhost:3002/health"
