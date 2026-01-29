@@ -1,7 +1,6 @@
 const ORDER_SERVICE_URL = 'http://localhost:3001';
 const INVENTORY_SERVICE_URL = 'http://localhost:3002';
 
-// Activity log
 const activityLog = [];
 
 function addActivity(message, type = 'info') {
@@ -21,7 +20,7 @@ function updateActivityLog() {
     `).join('');
 }
 
-// Check service health
+
 async function checkHealth() {
     try {
         const orderResponse = await fetch(`${ORDER_SERVICE_URL}/health`);
@@ -43,7 +42,7 @@ async function checkHealth() {
         document.getElementById('inventory-health').textContent = 'Offline';
     }
 
-    // Check circuit breaker
+  
     try {
         const cbResponse = await fetch(`${ORDER_SERVICE_URL}/api/resilience/stats`);
         const cbStats = await cbResponse.json();
@@ -62,7 +61,7 @@ async function checkHealth() {
     }
 }
 
-// Load inventory
+
 async function loadInventory() {
     const gridElement = document.getElementById('inventory-grid');
     gridElement.innerHTML = '<p>Loading...</p>';
@@ -102,7 +101,7 @@ async function loadInventory() {
     gridElement.innerHTML = html;
 }
 
-// Create order
+
 document.getElementById('order-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -158,7 +157,7 @@ document.getElementById('order-form').addEventListener('submit', async (e) => {
     }
 });
 
-// Chaos controls
+
 async function loadChaosStats() {
     try {
         const gremlinResponse = await fetch(`${INVENTORY_SERVICE_URL}/api/gremlin/stats`);
@@ -182,7 +181,7 @@ async function loadChaosStats() {
     }
 }
 
-// Note: Toggle functionality would require backend API endpoints to enable/disable gremlins
+
 document.getElementById('gremlin-toggle').addEventListener('change', (e) => {
     alert('To enable/disable gremlins, update ENABLE_GREMLIN in docker-compose.yml and restart the service');
     e.target.checked = !e.target.checked;
@@ -193,12 +192,12 @@ document.getElementById('crash-toggle').addEventListener('change', (e) => {
     e.target.checked = !e.target.checked;
 });
 
-// Initialize
+
 checkHealth();
 loadInventory();
 loadChaosStats();
 
-// Auto-refresh
+
 setInterval(checkHealth, 10000);
 setInterval(loadChaosStats, 15000);
 
