@@ -17,19 +17,20 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Build Order Service
+        run: |
+          cd order-service
+          docker build -t order-service:test .
+
+      - name: Build Inventory Service
+        run: |
+          cd inventory-service
+          docker build -t inventory-service:test .
+
       - name: Start services with Docker Compose
         run: |
           docker compose up -d
-          echo "Waiting for services to be healthy..."
-          sleep 40  # Wait for services to be fully ready (30s start_period + 10s buffer)
-
-      - name: Check service status
-        run: |
-          docker compose ps
-          echo "--- Order Service Logs ---"
-          docker compose logs --tail=50 order-service
-          echo "--- Inventory Service Logs ---"
-          docker compose logs --tail=50 inventory-service
+          sleep 20  # Wait for services to be fully ready
 
       - name: Health Check - Order Service
         run: |

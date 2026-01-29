@@ -3,7 +3,7 @@ const { getCircuitBreakerStats } = require('../services/inventoryClient');
 
 const router = express.Router();
 
-get('/stats', (req, res) => {
+router.get('/stats', (req, res) => {
   const stats = getCircuitBreakerStats();
   res.json(stats);
 });

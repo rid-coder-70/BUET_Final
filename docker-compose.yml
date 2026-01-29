@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   postgres-order:
     image: postgres:15-alpine
@@ -62,12 +64,6 @@ services:
         condition: service_healthy
       inventory-service:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); })"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
     networks:
       - valerix-network
     restart: unless-stopped
@@ -100,12 +96,6 @@ services:
     depends_on:
       postgres-inventory:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); })"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
     networks:
       - valerix-network
     restart: unless-stopped
