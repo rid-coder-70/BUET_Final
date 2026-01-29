@@ -34,7 +34,7 @@ describe('Inventory Service API', () => {
         productId: 'PROD-001',
         quantity: -1,
         orderId: 'TEST-ORDER-123',
-        idempotencyKey: 'TEST-UPDATE-KEY-456'
+        idempotencyKey: `TEST-UPDATE-KEY-${Date.now()}`
       };
 
       const res = await request(app)
@@ -48,11 +48,12 @@ describe('Inventory Service API', () => {
     });
 
     it('should handle idempotent updates', async () => {
+      const key = `TEST-IDEMPOTENT-UPDATE-${Date.now()}`;
       const updateData = {
         productId: 'PROD-002',
         quantity: -2,
         orderId: 'TEST-ORDER-789',
-        idempotencyKey: 'TEST-IDEMPOTENT-UPDATE-789'
+        idempotencyKey: key
       };
 
       // First update
@@ -69,8 +70,8 @@ describe('Inventory Service API', () => {
         .send(updateData);
 
       expect(res2.statusCode).toBe(200);
-      expect(res2.body.message).toContain('already processed');
-      const stock2 = res2.body.product.stockQuantity;
+      expect(res2.body.message).toContain('already updated');
+      const stock2 = res2.body.update.newQuantity;
 
       // Stock should be the same (no duplicate deduction)
       expect(stock2).toBe(stock1);

@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
-    "test:integration": "jest --testPathPattern=tests/integration"
+    "test": "NODE_ENV=test DB_PORT=5433 jest --coverage --forceExit",
+    "test:watch": "NODE_ENV=test DB_PORT=5433 jest --watch",
+    "test:integration": "NODE_ENV=test DB_PORT=5433 jest --testPathPattern=tests/integration"
   },
   "keywords": ["microservice", "express", "inventory-service"],
   "author": "",

@@ -49,7 +49,7 @@ describe('Order Service API', () => {
         productId: 'PROD-001',
         productName: 'Test Product',
         quantity: 1,
-        idempotencyKey: 'TEST-IDEMPOTENT-KEY-123'
+        idempotencyKey: `TEST-IDEMPOTENT-KEY-${Date.now()}`
       };
 
       // First request

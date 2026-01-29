@@ -74,6 +74,9 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Start server only if not in test mode
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
 
 module.exports = app;
