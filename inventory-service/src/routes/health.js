@@ -3,10 +3,7 @@ const { sequelize } = require('../config/database');
 
 const router = express.Router();
 
-/**
- * Health check endpoint with dependency validation
- * Returns 200 if healthy, 503 if unhealthy
- */
+
 router.get('/', async (req, res) => {
   const health = {
     service: 'inventory-service',
@@ -22,7 +19,6 @@ router.get('/', async (req, res) => {
   };
 
   try {
-    // Check database connectivity
     await sequelize.authenticate();
     health.checks.database = 'connected';
   } catch (error) {

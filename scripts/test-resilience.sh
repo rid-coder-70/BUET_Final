@@ -1,4 +1,4 @@
-#!/bin/bash
+
 
 echo "=============================================="
 echo "Testing Resilience Patterns (Phase 3)"
@@ -10,13 +10,13 @@ echo "  - Timeout: 5000ms"
 echo "  - Max Retries: 3"
 echo ""
 
-# Reset gremlin counter
+
 curl -s -X POST http://localhost:3002/api/gremlin/reset > /dev/null
-echo "✅ Gremlin counter reset"
+echo "Gremlin counter reset"
 echo ""
 
-# Check circuit breaker stats before
-echo "📊 Circuit Breaker Status (before):"
+
+echo "Circuit Breaker Status (before):"
 curl -s http://localhost:3001/api/resilience/stats | jq '{state, config}'
 echo ""
 
@@ -37,7 +37,7 @@ for i in {1..3}; do
   STATUS=$(echo "$RESPONSE" | jq -r '.message')
   ORDER_STATUS=$(echo "$RESPONSE" | jq -r '.order.status')
   
-  echo "  ⏱️  ${ELAPSED}ms - Status: $ORDER_STATUS - $STATUS"
+  echo " ${ELAPSED}ms - Status: $ORDER_STATUS - $STATUS"
 done
 
 echo ""
@@ -58,10 +58,10 @@ STATUS=$(echo "$RESPONSE" | jq -r '.message')
 ORDER_STATUS=$(echo "$RESPONSE" | jq -r '.order.status')
 HAS_ERROR=$(echo "$RESPONSE" | jq -r '.inventoryError // "none"')
 
-echo "  ⏱️  ${ELAPSED}ms - Status: $ORDER_STATUS"
-echo "  📝 Message: $STATUS"
+echo "  ${ELAPSED}ms - Status: $ORDER_STATUS"
+echo "  Message: $STATUS"
 if [ "$HAS_ERROR" != "none" ]; then
-  echo "  ⚠️  Inventory Error: $HAS_ERROR"
+  echo "  Inventory Error: $HAS_ERROR"
 fi
 
 echo ""

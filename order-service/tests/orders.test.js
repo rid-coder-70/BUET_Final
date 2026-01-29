@@ -32,7 +32,6 @@ describe('Order Service API', () => {
     it('should reject order with missing fields', async () => {
       const invalidOrder = {
         customerId: 'CUST-TEST'
-        // Missing required fields
       };
 
       const res = await request(app)
@@ -52,7 +51,6 @@ describe('Order Service API', () => {
         idempotencyKey: `TEST-IDEMPOTENT-KEY-${Date.now()}`
       };
 
-      // First request
       const res1 = await request(app)
         .post('/api/orders')
         .send(orderData);
@@ -60,7 +58,6 @@ describe('Order Service API', () => {
       expect(res1.statusCode).toBe(201);
       const orderId1 = res1.body.order.id;
 
-      // Second request with same key
       const res2 = await request(app)
         .post('/api/orders')
         .send(orderData);

@@ -3,10 +3,7 @@ const { register } = require('../metrics');
 
 const router = express.Router();
 
-/**
- * Prometheus metrics endpoint
- * GET /metrics
- */
+
 router.get('/', async (req, res) => {
   try {
     res.set('Content-Type', register.contentType);

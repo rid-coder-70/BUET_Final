@@ -4,15 +4,12 @@ const { updateInventory } = require('../services/inventoryClient');
 
 const router = express.Router();
 
-/**
- * Create a new order
- * POST /api/orders
- */
+
 router.post('/', async (req, res) => {
   try {
     const { customerId, productId, productName, quantity, idempotencyKey } = req.body;
 
-    // Validate required fields
+   
     if (!customerId || !productId || !productName || !quantity) {
       return res.status(400).json({
         error: 'Missing required fields',
@@ -20,7 +17,7 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Check for idempotency - if key exists, return existing order
+    
     if (idempotencyKey) {
       const existingOrder = await Order.findOne({ where: { idempotencyKey } });
       if (existingOrder) {
@@ -31,7 +28,7 @@ router.post('/', async (req, res) => {
       }
     }
 
-    // Create order
+    
     const order = await Order.create({
       customerId,
       productId,
@@ -41,9 +38,9 @@ router.post('/', async (req, res) => {
       idempotencyKey: idempotencyKey || null
     });
 
-    console.log(`📝 Order created: ${order.id}`);
+    console.log(`Order created: ${order.id}`);
 
-    // Try to update inventory with resilience patterns
+    
     const inventoryResult = await updateInventory(
       productId,
       quantity,
@@ -52,13 +49,13 @@ router.post('/', async (req, res) => {
     );
 
     if (inventoryResult.success) {
-      // Inventory updated successfully
+      
       await order.update({
         status: 'shipped',
         inventoryUpdated: true
       });
 
-      console.log(`✅ Order ${order.id} shipped and inventory updated`);
+      console.log(`Order ${order.id} shipped and inventory updated`);
 
       return res.status(201).json({
         message: 'Order created and shipped successfully',
@@ -66,15 +63,12 @@ router.post('/', async (req, res) => {
         inventoryUpdate: inventoryResult.data
       });
     } else {
-      // Inventory update failed (timeout, circuit breaker, etc.)
       await order.update({
         status: 'failed',
         errorMessage: inventoryResult.error
       });
 
-      console.warn(`⚠️  Order ${order.id} created but inventory update failed: ${inventoryResult.error}`);
-
-      // Return 201 (order created) but indicate inventory issue
+      console.warn(`Order ${order.id} created but inventory update failed: ${inventoryResult.error}`);
       return res.status(201).json({
         message: 'Order created but inventory update failed',
         order,
@@ -91,10 +85,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-/**
- * Get order by ID
- * GET /api/orders/:id
- */
+
 router.get('/:id', async (req, res) => {
   try {
     const order = await Order.findByPk(req.params.id);
@@ -113,10 +104,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-/**
- * Get all orders (with optional filtering)
- * GET /api/orders
- */
+
 router.get('/', async (req, res) => {
   try {
     const { customerId, status } = req.query;

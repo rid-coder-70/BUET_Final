@@ -4,19 +4,12 @@ const { getCrashStats, resetCrashSimulator } = require('../middleware/crashSimul
 
 const router = express.Router();
 
-/**
- * Get gremlin statistics
- * GET /api/gremlin/stats
- */
 router.get('/stats', (req, res) => {
   const stats = getGremlinStats();
   res.json(stats);
 });
 
-/**
- * Reset gremlin counter
- * POST /api/gremlin/reset
- */
+
 router.post('/reset', (req, res) => {
   resetGremlin();
   res.json({
@@ -25,19 +18,13 @@ router.post('/reset', (req, res) => {
   });
 });
 
-/**
- * Get crash simulator statistics
- * GET /api/gremlin/crash-stats
- */
+
 router.get('/crash-stats', (req, res) => {
   const stats = getCrashStats();
   res.json(stats);
 });
 
-/**
- * Reset crash simulator counter
- * POST /api/gremlin/crash-reset
- */
+
 router.post('/crash-reset', (req, res) => {
   resetCrashSimulator();
   res.json({

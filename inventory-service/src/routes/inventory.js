@@ -5,10 +5,6 @@ const { sequelize } = require('../config/database');
 
 const router = express.Router();
 
-/**
- * Get product inventory by productId
- * GET /api/inventory/:productId
- */
 router.get('/:productId', async (req, res) => {
   try {
     const product = await Product.findOne({
@@ -32,17 +28,13 @@ router.get('/:productId', async (req, res) => {
   }
 });
 
-/**
- * Update inventory (decrease stock when order ships)
- * POST /api/inventory/update
- */
 router.post('/update', async (req, res) => {
   const transaction = await sequelize.transaction();
   
   try {
     const { productId, quantity, orderId, idempotencyKey } = req.body;
 
-    // Validate required fields
+    
     if (!productId || !quantity) {
       await transaction.rollback();
       return res.status(400).json({
@@ -51,7 +43,6 @@ router.post('/update', async (req, res) => {
       });
     }
 
-    // Check for idempotency - if key exists, return existing update
     if (idempotencyKey) {
       const existingUpdate = await InventoryUpdate.findOne({
         where: { idempotencyKey },
@@ -68,7 +59,7 @@ router.post('/update', async (req, res) => {
       }
     }
 
-    // Find or create product
+
     let product = await Product.findOne({
       where: { productId },
       transaction
@@ -82,7 +73,6 @@ router.post('/update', async (req, res) => {
       });
     }
 
-    // Check if sufficient stock
     if (product.stockQuantity < quantity) {
       await transaction.rollback();
       return res.status(400).json({
@@ -95,10 +85,8 @@ router.post('/update', async (req, res) => {
     const previousQuantity = product.stockQuantity;
     const newQuantity = previousQuantity - quantity;
 
-    // Update stock
     await product.update({ stockQuantity: newQuantity }, { transaction });
 
-    // Log the update
     const inventoryUpdate = await InventoryUpdate.create({
       productId,
       quantityChange: -quantity,
@@ -131,10 +119,6 @@ router.post('/update', async (req, res) => {
   }
 });
 
-/**
- * Get all products
- * GET /api/inventory
- */
 router.get('/', async (req, res) => {
   try {
     const products = await Product.findAll({

@@ -19,19 +19,18 @@ const sequelize = new Sequelize(
   }
 );
 
-// Test database connection
+
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Inventory Service: PostgreSQL connection established successfully');
+    console.log('Inventory Service: PostgreSQL connection established successfully');
     
-    // Sync models (create tables if they don't exist)
     await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
-    console.log('✅ Inventory Service: Database models synchronized');
+    console.log('Inventory Service: Database models synchronized');
     
     return true;
   } catch (error) {
-    console.error('❌ Inventory Service: Unable to connect to database:', error);
+    console.error('Inventory Service: Unable to connect to database:', error);
     return false;
   }
 };

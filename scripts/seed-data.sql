@@ -1,7 +1,3 @@
--- Seed data for Inventory Service
--- Run this after the service starts to populate initial products
-
--- Insert sample products
 INSERT INTO products (id, product_id, product_name, stock_quantity, created_at, updated_at)
 VALUES 
   (gen_random_uuid(), 'PROD-001', 'Gaming Console - PlayStation 5', 100, NOW(), NOW()),
