@@ -10,6 +10,32 @@ describe('Inventory Service API', () => {
     });
   });
 
+  beforeAll(async () => {
+    // Seed test data
+    const Product = require('../src/models/Product');
+    await Product.sync({ alter: true }); // Ensure table exists
+    
+    await Product.findOrCreate({
+      where: { productId: 'PROD-001' },
+      defaults: {
+        productId: 'PROD-001',
+        productName: 'Test Product 1',
+        stockQuantity: 100,
+        price: 999.99
+      }
+    });
+
+    await Product.findOrCreate({
+      where: { productId: 'PROD-002' },
+      defaults: {
+        productId: 'PROD-002',
+        productName: 'Test Product 2',
+        stockQuantity: 50,
+        price: 49.99
+      }
+    });
+  });
+
   describe('GET /api/inventory/:productId', () => {
     it('should return product inventory', async () => {
       const res = await request(app).get('/api/inventory/PROD-001');
