@@ -1,6 +1,6 @@
 # Valerix System Architecture
 
-![System Architecture](/home/ridoy-pc/.gemini/antigravity/brain/bf5e462b-80d3-44b1-889b-09d0eaf24ebd/uploaded_media_1769682451065.png)
+![System Architecture](image.png)
 
 ## Overview
 

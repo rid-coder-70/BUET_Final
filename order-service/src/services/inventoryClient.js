@@ -3,7 +3,7 @@ const axiosRetry = require('axios-retry').default;
 const CircuitBreaker = require('opossum');
 
 
-const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || 'http://localhost:3002';
+const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || 'http://104.214.168.187:3002';
 const REQUEST_TIMEOUT_MS = parseInt(process.env.REQUEST_TIMEOUT_MS) || 5000;
 const MAX_RETRIES = parseInt(process.env.MAX_RETRIES) || 3;
 

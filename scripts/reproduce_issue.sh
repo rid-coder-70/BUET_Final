@@ -17,7 +17,7 @@ sleep 10
 
 # Check health of Order Service
 echo "Checking Order Service Health..."
-if curl -f http://localhost:3001/health; then
+if curl -f http://104.214.168.187:3001/health; then
   echo "Order Service is HEALTHY"
   exit 0
 else

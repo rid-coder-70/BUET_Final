@@ -11,13 +11,13 @@ echo "  - Max Retries: 3"
 echo ""
 
 
-curl -s -X POST http://localhost:3002/api/gremlin/reset > /dev/null
+curl -s -X POST http://104.214.168.187:3002/api/gremlin/reset > /dev/null
 echo "Gremlin counter reset"
 echo ""
 
 
 echo "Circuit Breaker Status (before):"
-curl -s http://localhost:3001/api/resilience/stats | jq '{state, config}'
+curl -s http://104.214.168.187:3001/api/resilience/stats | jq '{state, config}'
 echo ""
 
 echo "=============================================="
@@ -28,7 +28,7 @@ echo ""
 for i in {1..3}; do
   echo "Creating order $i..."
   START=$(date +%s%3N)
-  RESPONSE=$(curl -s -X POST http://localhost:3001/api/orders \
+  RESPONSE=$(curl -s -X POST http://104.214.168.187:3001/api/orders \
     -H "Content-Type: application/json" \
     -d "{\"customerId\":\"CUST-TEST\",\"productId\":\"PROD-001\",\"productName\":\"Test Product\",\"quantity\":1}")
   END=$(date +%s%3N)
@@ -48,7 +48,7 @@ echo ""
 
 echo "Creating order (should hit gremlin on 5th inventory call)..."
 START=$(date +%s%3N)
-RESPONSE=$(curl -s -X POST http://localhost:3001/api/orders \
+RESPONSE=$(curl -s -X POST http://104.214.168.187:3001/api/orders \
   -H "Content-Type: application/json" \
   -d '{"customerId":"CUST-TEST","productId":"PROD-001","productName":"Test Product","quantity":1}')
 END=$(date +%s%3N)
@@ -68,7 +68,7 @@ echo ""
 echo "=============================================="
 echo "Circuit Breaker Status (after):"
 echo "=============================================="
-curl -s http://localhost:3001/api/resilience/stats | jq .
+curl -s http://104.214.168.187:3001/api/resilience/stats | jq .
 
 echo ""
 echo "=============================================="

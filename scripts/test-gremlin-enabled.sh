@@ -7,12 +7,12 @@ echo ""
 
 
 echo "1. Resetting gremlin counter..."
-curl -s -X POST http://localhost:3002/api/gremlin/reset | jq .
+curl -s -X POST http://104.214.168.187:3002/api/gremlin/reset | jq .
 echo ""
 
 
 echo "2. Checking gremlin configuration..."
-curl -s http://localhost:3002/api/gremlin/stats | jq .
+curl -s http://104.214.168.187:3002/api/gremlin/stats | jq .
 echo ""
 
 
@@ -21,7 +21,7 @@ echo "   (Every 5th request should be delayed by 3000ms)"
 echo ""
 for i in {1..10}; do
   START=$(date +%s%3N)
-  RESPONSE=$(curl -s -i http://localhost:3002/api/inventory)
+  RESPONSE=$(curl -s -i http://104.214.168.187:3002/api/inventory)
   END=$(date +%s%3N)
   ELAPSED=$((END - START))
   

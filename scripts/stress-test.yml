@@ -1,5 +1,5 @@
 config:
-  target: "http://localhost:3001"
+  target: "http://104.214.168.187:3001"
   phases:
     - duration: 60
       arrivalRate: 10
@@ -44,4 +44,4 @@ scenarios:
       - get:
           url: "/health"
       - get:
-          url: "http://localhost:3002/health"
+          url: "http://104.214.168.187:3002/health"

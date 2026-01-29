@@ -13,7 +13,7 @@
 ```
 ┌─────────────┐      HTTP/REST      ┌──────────────────┐
 │   Web UI    │ ───────────────────▶│  Order Service   │
-│ localhost:  │                      │   (Port 3001)    │
+│ 104.214.168.187:  │                      │   (Port 3001)    │
 │    8080     │                      │                  │
 └─────────────┘                      │ - Circuit Breaker│
                                       │ - Retry Logic    │
@@ -92,11 +92,11 @@ python3 -m http.server 8080
 
 ### 4. Access the System
 
-- **Web Dashboard**: http://localhost:8080
-- **Order Service API**: http://localhost:3001
-- **Inventory Service API**: http://localhost:3002
-- **Prometheus**: http://localhost:9090
-- **Grafana**: http://localhost:3000 (admin/admin)
+- **Web Dashboard**: http://104.214.168.187:8080
+- **Order Service API**: http://104.214.168.187:3001
+- **Inventory Service API**: http://104.214.168.187:3002
+- **Prometheus**: http://104.214.168.187:9090
+- **Grafana**: http://104.214.168.187:3000 (admin/admin)
 
 ---
 
@@ -178,7 +178,7 @@ bash scripts/restore-databases.sh 20260129_102259
 **Create Order Example:**
 
 ```bash
-curl -X POST http://localhost:3001/api/orders \
+curl -X POST http://104.214.168.187:3001/api/orders \
   -H "Content-Type: application/json" \
   -d '{
     "customerId": "CUST-001",
@@ -222,10 +222,10 @@ GREMLIN_PATTERN: deterministic # or "random"
 
 ```bash
 # Check stats
-curl http://localhost:3002/api/gremlin/stats
+curl http://104.214.168.187:3002/api/gremlin/stats
 
 # Reset counter
-curl -X POST http://localhost:3002/api/gremlin/reset
+curl -X POST http://104.214.168.187:3002/api/gremlin/reset
 ```
 
 ### Crash Simulator
@@ -246,7 +246,7 @@ CRASH_PROBABILITY: 0.2 # For random mode (20%)
 
 ```bash
 # Check stats
-curl http://localhost:3002/api/gremlin/crash-stats
+curl http://104.214.168.187:3002/api/gremlin/crash-stats
 
 # Run idempotency test
 bash scripts/test-idempotency.sh
@@ -278,7 +278,7 @@ Custom metrics exposed at `/metrics`:
 
 ### Grafana Dashboards
 
-Access Grafana at http://localhost:3000 (admin/admin)
+Access Grafana at http://104.214.168.187:3000 (admin/admin)
 
 **Pre-configured datasource:** Prometheus (auto-configured)
 
@@ -302,7 +302,7 @@ inventory_stock_level
 
 ## 🎨 Web UI Features
 
-Access at **http://localhost:8080**
+Access at **http://104.214.168.187:8080**
 
 ### 1. System Status Dashboard
 
@@ -444,7 +444,7 @@ cd inventory-service && npm test
 ```bash
 cd order-service
 npm install
-export DB_HOST=localhost DB_PORT=5432 DB_NAME=order_db DB_USER=order_user DB_PASSWORD=order_password
+export DB_HOST=104.214.168.187 DB_PORT=5432 DB_NAME=order_db DB_USER=order_user DB_PASSWORD=order_password
 npm run dev
 ```
 
@@ -453,7 +453,7 @@ npm run dev
 ```bash
 cd inventory-service
 npm install
-export DB_HOST=localhost DB_PORT=5433 DB_NAME=inventory_db DB_USER=inventory_user DB_PASSWORD=inventory_password
+export DB_HOST=104.214.168.187 DB_PORT=5433 DB_NAME=inventory_db DB_USER=inventory_user DB_PASSWORD=inventory_password
 npm run dev
 ```
 
@@ -497,8 +497,8 @@ docker compose ps
 bash scripts/test-integration.sh
 
 # Open web dashboard
-open http://localhost:8080  # Mac
-xdg-open http://localhost:8080  # Linux
+open http://104.214.168.187:8080  # Mac
+xdg-open http://104.214.168.187:8080  # Linux
 ```
 
 **Expected Result**: All tests passing, all services healthy, UI accessible.

@@ -1,5 +1,5 @@
-const ORDER_SERVICE_URL = 'http://localhost:3001';
-const INVENTORY_SERVICE_URL = 'http://localhost:3002';
+const ORDER_SERVICE_URL = 'http://104.214.168.187:3001';
+const INVENTORY_SERVICE_URL = 'http://104.214.168.187:3002';
 
 const activityLog = [];
 

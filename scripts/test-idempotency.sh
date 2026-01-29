@@ -18,12 +18,12 @@ echo ""
 
 
 echo "Current inventory for PROD-003:"
-INITIAL_STOCK=$(curl -s http://localhost:3002/api/inventory/PROD-003 | jq -r '.product.stockQuantity')
+INITIAL_STOCK=$(curl -s http://104.214.168.187:3002/api/inventory/PROD-003 | jq -r '.product.stockQuantity')
 echo "   Stock: $INITIAL_STOCK units"
 echo ""
 
 
-curl -s -X POST http://localhost:3002/api/gremlin/crash-reset > /dev/null
+curl -s -X POST http://104.214.168.187:3002/api/gremlin/crash-reset > /dev/null
 echo "Crash simulator counter reset"
 echo ""
 
@@ -38,7 +38,7 @@ for i in {1..10}; do
   echo "Attempt $i: Creating order with idempotency key: $IDEMPOTENCY_KEY"
   
   START=$(date +%s%3N)
-  RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST http://localhost:3001/api/orders \
+  RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" -X POST http://104.214.168.187:3001/api/orders \
     -H "Content-Type: application/json" \
     -d "{\"customerId\":\"CUST-IDEMPOTENCY\",\"productId\":\"PROD-003\",\"productName\":\"Nintendo Switch\",\"quantity\":5,\"idempotencyKey\":\"$IDEMPOTENCY_KEY\"}" 2>&1)
   END=$(date +%s%3N)
@@ -72,7 +72,7 @@ echo "Verification: Check inventory consistency"
 echo "============================================================"
 echo ""
 
-FINAL_STOCK=$(curl -s http://localhost:3002/api/inventory/PROD-003 | jq -r '.product.stockQuantity')
+FINAL_STOCK=$(curl -s http://104.214.168.187:3002/api/inventory/PROD-003 | jq -r '.product.stockQuantity')
 EXPECTED_STOCK=$((INITIAL_STOCK - 5))
 
 echo "Initial stock:  $INITIAL_STOCK units"

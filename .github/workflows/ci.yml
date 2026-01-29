@@ -80,3 +80,32 @@ jobs:
         if: always()
         run: |
           docker compose down -v
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Deploy to Azure VM
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            # Navigate to project directory (or clone if it doesn't exist)
+            if [ -d "BUET_Final" ]; then
+              cd BUET_Final
+              git pull origin main
+            else
+              git clone https://github.com/rid-coder-70/BUET_Final.git
+              cd BUET_Final
+            fi
+            
+            # Rebuild and restart services
+            docker compose down
+            docker compose up -d --build
+            
+            # Prune unused images to save space
+            docker image prune -f

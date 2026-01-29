@@ -71,8 +71,8 @@ const startServer = async () => {
 
     app.listen(PORT, () => {
       console.log(`Inventory Service running on port ${PORT}`);
-      console.log(`Health check: http://localhost:${PORT}/health`);
-      console.log(`API endpoints: http://localhost:${PORT}/api/inventory`);
+      console.log(`Health check: http://104.214.168.187:${PORT}/health`);
+      console.log(`API endpoints: http://104.214.168.187:${PORT}/api/inventory`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
