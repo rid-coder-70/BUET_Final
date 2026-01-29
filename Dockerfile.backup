@@ -1,0 +1,19 @@
+FROM alpine:3.18
+
+
+RUN apk add --no-cache postgresql-client bash curl tar gzip
+
+WORKDIR /scripts
+
+
+COPY scripts/backup-to-volume.sh .
+COPY scripts/sync-to-external.sh .
+COPY scripts/setup-cron.sh .
+COPY scripts/restore-internal.sh .
+
+RUN chmod +x backup-to-volume.sh sync-to-external.sh setup-cron.sh restore-internal.sh
+
+RUN mkdir -p /var/log
+
+
+CMD ["./setup-cron.sh"]

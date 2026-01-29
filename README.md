@@ -51,6 +51,7 @@
 ✅ **Real-time Monitoring** - Prometheus metrics, Grafana dashboards  
 ✅ **Interactive UI** - Web dashboard for order management and system monitoring  
 ✅ **Cloud-Ready** - Container-based, Kubernetes manifests, Azure deployment guide
+✅ **Smart Backups** - Automated multi-point daily backups with compliant external syncing
 
 ---
 
@@ -134,6 +135,30 @@ bash scripts/test-gremlin-disabled.sh
 
 # Test with gremlin enabled (3s delays)
 bash scripts/test-gremlin-enabled.sh
+```
+
+---
+
+## 🛡️ Backup & Recovery
+
+The system implements a smart backup strategy to ensure data safety while respecting external API limits.
+
+### Architecture
+- **Backup Frequency**: Local backups taken every 4 hours (6x/day)
+- **External Sync**: Bundled and synced once per day (23:00) to meet "one call per day" limit
+- **Storage**: Persistent Docker volume `backup-storage`
+
+### Commands
+
+```bash
+# Manually trigger a backup point
+docker exec valerix-backup-service /scripts/backup-to-volume.sh
+
+# List available backups
+bash scripts/restore-databases.sh
+
+# Restore from a generic timestamp
+bash scripts/restore-databases.sh 20260129_102259
 ```
 
 ---
@@ -373,6 +398,13 @@ valerix-microservices/
 └── .github/
     └── workflows/
         └── ci.yml              # GitHub Actions CI/CD
+├── arch.md                      # System Architecture documentation
+├── Dockerfile.backup            # Backup service image
+└── scripts/
+    ├── backup-to-volume.sh      # Internal backup logic
+    ├── sync-to-external.sh      # Daily sync logic
+    ├── restore-internal.sh      # Restore logic
+    └── restore-databases.sh     # Host restore wrapper
 ```
 
 ---
